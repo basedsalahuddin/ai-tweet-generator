@@ -1,11 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import PromptForm from '@/components/PromptForm';
 import PromptHistory from '@/components/PromptHistory';
 import { MessageCircle } from 'lucide-react';
+import { getGeminiKey, setGeminiKey } from '@/utils/aiUtils';
+import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
+  const [apiKey, setApiKey] = useState('');
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const savedKey = getGeminiKey();
+    if (savedKey) {
+      setApiKey(savedKey);
+    }
+  }, []);
+
+  const handleSaveKey = () => {
+    setGeminiKey(apiKey);
+    toast({
+      title: "API Key Saved",
+      description: "Your Gemini API key has been saved successfully",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-tampurple to-black text-white font-spaceGrotesk">
       <div className="container px-4 py-8">
@@ -20,6 +41,27 @@ const Index = () => {
             Your AI-powered crypto companion. Tell me what to tweet, and I'll engage with the community on your behalf.
           </p>
         </header>
+
+        <div className="max-w-xl mx-auto mb-8">
+          <Card className="p-6 bg-black/50 border-tamblue/20 backdrop-blur-sm">
+            <h2 className="text-xl font-bold mb-4 text-tamblue">API Configuration</h2>
+            <div className="flex gap-4">
+              <Input
+                type="password"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="Enter your Gemini API key"
+                className="flex-1 bg-black/30 border-tamblue/30 text-white placeholder:text-gray-400"
+              />
+              <Button 
+                onClick={handleSaveKey}
+                className="bg-gradient-to-r from-tamblue to-tampink hover:opacity-90"
+              >
+                Save Key
+              </Button>
+            </div>
+          </Card>
+        </div>
 
         <div className="grid gap-8 md:grid-cols-2">
           <Card className="p-6 bg-black/50 border-tamblue/20 backdrop-blur-sm">

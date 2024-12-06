@@ -1,9 +1,21 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+export const getGeminiKey = () => {
+  return localStorage.getItem('GEMINI_API_KEY');
+};
+
+export const setGeminiKey = (key: string) => {
+  localStorage.setItem('GEMINI_API_KEY', key);
+};
+
 export const generateAIResponse = async (prompt: string) => {
   try {
-    // In production, this should come from Supabase secrets
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+    const apiKey = getGeminiKey();
+    if (!apiKey) {
+      return 'Please set your Gemini API key first';
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     
     const result = await model.generateContent(prompt);
